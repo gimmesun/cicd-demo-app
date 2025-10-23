@@ -1,49 +1,33 @@
-version: '3.8'
-
 services:
   frontend:
-    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPO}/frontend:latest
+    image: ${IMAGE_FE}
     ports:
       - "3000:80"
     depends_on:
       - backend
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   backend:
-    image: ghcr.io/${GITHUB_USERNAME}/${GITHUB_REPO}/backend:latest
+    image: ${IMAGE_BE}
     ports:
       - "3001:3001"
     environment:
       - DB_HOST=database
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=myapp
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     depends_on:
       - database
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"
 
   database:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=myapp
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - db-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  watchtower:
-    image: containrrr/watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 60 --cleanup
-    environment:
-      - WATCHTOWER_TRACE=true
-      - WATCHTOWER_ROLLING_RESTART=true  # 순차 재시작
-      - WATCHTOWER_TIMEOUT=30s          # 충분한 대기시간
 
 volumes:
   db-data:
