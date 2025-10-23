@@ -19,7 +19,7 @@ const pool = new Pool({
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'Backend is running! 🚀 v2.2',
     timestamp: new Date().toISOString()
   });
@@ -36,9 +36,13 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// Initialize database
 async function initDB() {
+  console.log('try init db');
+
   try {
+    await pool.connect();
+    console.log('✅ Connected to Postgres');
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -46,9 +50,10 @@ async function initDB() {
         email VARCHAR(100)
       )
     `);
-    
-    const { rowCount } = await pool.query('SELECT COUNT(*) FROM users');
-    if (rowCount === 0) {
+
+    const count = await pool.query('SELECT COUNT(*) FROM users');
+    const rowCount = count.rows[0].count;
+    if (Number(rowCount) === 0) {
       await pool.query(`
         INSERT INTO users (name, email) VALUES
         ('Alice', 'alice@example.com'),
@@ -58,11 +63,13 @@ async function initDB() {
       console.log('✅ Database initialized with sample data');
     }
   } catch (err) {
-    console.error('Database initialization error:', err);
+    console.log({ err });
+    setTimeout(initDB, 5000); // Retry after 5 seconds
   }
 }
 
 app.listen(port, () => {
   console.log(`🚀 Backend running on port ${port}`);
+
   initDB();
 });
