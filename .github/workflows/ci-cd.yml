@@ -62,5 +62,5 @@ jobs:
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
-          docker compose -f ${{ env.IMAGE_NAME }}/docker-compose.yml up -d
+          docker compose -f /home/ec2-user/${{ env.IMAGE_NAME }}/docker-compose.yml up -d
           docker image prune -f
