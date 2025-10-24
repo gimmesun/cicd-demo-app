@@ -65,3 +65,6 @@ jobs:
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
           docker compose up -d
           docker image prune -f
+      - name: Delete docker auth
+        run: |
+          docker logout ${{ env.REGISTRY }}
