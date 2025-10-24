@@ -49,18 +49,18 @@ jobs:
       - name: Deployment notification
         run: |
           echo "✅ Images pushed to GHCR"
-  # deploy:
-  #   needs: build-and-push
-  #   runs-on: self-hosted
-  #   permissions:
-  #     packages: read
-  #   steps:
-  #     - name: login to GHCR
-  #       run: |
-  #         echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-  #     - name: pull docker image
-  #       run: |
-  #         docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
-  #         docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
-  #         docker-compose -f ${{ env.IMAGE_NAME }}/docker-compose.yml up -d
-  #         docker image prune -f
+  deploy:
+    needs: build-and-push
+    runs-on: self-hosted
+    permissions:
+      packages: read
+    steps:
+      - name: login to GHCR
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+      - name: pull docker image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
+          docker-compose -f ${{ env.IMAGE_NAME }}/docker-compose.yml up -d
+          docker image prune -f

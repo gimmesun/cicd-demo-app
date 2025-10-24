@@ -24,7 +24,7 @@ function App() {
       <header className="App-header">
         <h1>🚀 CI/CD Demo App</h1>
         <p>{message}</p>
-        <p>Welcome to the CI/CD Demo Application!</p>
+        <p>뭔가 바뀜</p>
         <div className="users">
           <h2>Users:</h2>
           {users.map(user => (
