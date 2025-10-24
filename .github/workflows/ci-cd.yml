@@ -57,10 +57,11 @@ jobs:
     steps:
       - name: login to GHCR
         run: |
+          cd /home/ec2-user/cicd-demo-app
           echo ${{ secrets.GITHUB_TOKEN }} | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
       - name: pull docker image
         run: |
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:latest
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend:latest
-          docker compose -f /home/ec2-user/${{ env.IMAGE_NAME }}/docker-compose.yml up -d
+          docker compose up -d
           docker image prune -f
